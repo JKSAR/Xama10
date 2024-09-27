@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     {
         try
         {
-            URL url = new URL("http://192.168.18.3:8080/json.xama1/xama");
+            URL url = new URL("http://192.168.18.45:8080/json.xama1/xama");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(10000 /* milliseconds */);
             conn.setConnectTimeout(15000 /* milliseconds */);
