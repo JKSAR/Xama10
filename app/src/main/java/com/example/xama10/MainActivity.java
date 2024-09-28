@@ -13,6 +13,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         tv1 = (TextView)findViewById(R.id.textView1);
         tv1.setText("Julio Cesar");
         this.LedOff();
-        //this.content(tv1);
+        this.content(tv1);
     }
 
     public void content(TextView tv1) {
@@ -91,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
     private void refresh( int milliseconds , TextView tv1 )
     {
         final Handler handler = new Handler();
-
         final Runnable runnable = new Runnable() {
             @Override
 
@@ -99,13 +101,20 @@ public class MainActivity extends AppCompatActivity {
             {
                 String line = "";
                 BufferedReader bufferedReader = null;
-
+                data = "";
                 try
                 {
-                    //URL url = new URL("http://192.168.18.3:8080/json.xama1/xama");
-                    URL url = new URL("https://api.npoint.io/");
+                    URL url = new URL("http://192.168.18.45:8080/json.xama1/xama");
+                    //URL url = new URL("https://api.npoint.io/");
                     HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                    String l_err = httpURLConnection.getErrorStream().toString();
+                    httpURLConnection.setConnectTimeout(15000 /* milliseconds */);
+                    httpURLConnection.setRequestMethod("GET"); // Or any method you need
+                    httpURLConnection.setDoInput(true);
+                    httpURLConnection.connect();
+
+                    //String l_err = httpURLConnection.getErrorStream().toString();
+                    int response = httpURLConnection.getResponseCode();
+
                     InputStream inputStream = httpURLConnection.getInputStream();
                     bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
@@ -118,21 +127,84 @@ public class MainActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
 
+                String jsonString = data;
 
+                // Cria um JSONObject a partir da string
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(jsonString);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
 
-                //new DownloadJSON(new DownloadJSON.AsyncCallback() {
-                 //   @Override
-                 //   public void onComplete(String result) {
-                 //       tv1.setText(result);
-                 //   }
-                 // }).execute("http://192.168.18.3:8080/json.xama1/xama");
+                try {
+                    int idClient = jsonObject.getInt("idClient");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
 
-                tv1.setText("Eloisa Helena");
-                //new FetchData().start();
-                content(tv1);
+                int table = 0;
+                try {
+                    table = jsonObject.getInt("table");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if( table > 0 ) {
+                    tv1.setText(String.valueOf(table));
+                    sendZeroTable();
+                    content(tv1);
+                }
+                else
+                {
+                    String  l_table = "";
+                    l_table = String.valueOf(tv1.getText());
+                    tv1.setText(l_table);
+                    content(tv1);
+                }
             }
         };
 
         handler.postDelayed(runnable, milliseconds);
+    }
+
+    private void sendZeroTable( )
+    {
+        final Handler handler = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+
+            public void run()
+            {
+                String line = "";
+                BufferedReader bufferedReader = null;
+                try
+                {
+                    URL url = new URL("http://192.168.18.45:8080/json.xama1/servletInput?mesa=0");
+                    //URL url = new URL("https://api.npoint.io/");
+                    HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                    httpURLConnection.setConnectTimeout(15000 /* milliseconds */);
+                    httpURLConnection.setRequestMethod("GET"); // Or any method you need
+                    httpURLConnection.setDoInput(true);
+                    httpURLConnection.connect();
+
+                    //String l_err = httpURLConnection.getErrorStream().toString();
+                    int response = httpURLConnection.getResponseCode();
+
+/*                    InputStream inputStream = httpURLConnection.getInputStream();
+                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    while ((line = bufferedReader.readLine()) != null)
+                    {
+                        data = data + line;
+                    }*/
+                } catch (IOException e) {
+                    //e.printStackTrace();
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+
+        //handler.postDelayed(runnable, 100);
     }
 }
