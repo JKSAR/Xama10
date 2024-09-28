@@ -21,14 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
-    Handler mainHandler = new Handler();
+    //Handler mainHandler = new Handler();
     String data = "";
 
     TextView tv1 = null;
@@ -54,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        tv1 = (TextView)findViewById(R.id.textView1);
+        //tv1 = (TextView)findViewById(R.id.textView1);
+        tv1 = findViewById(R.id.textView1);
         tv1.setText("Julio Cesar");
         this.LedOff();
         this.content(tv1);
@@ -99,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
 
             public void run()
             {
-                String line = "";
-                BufferedReader bufferedReader = null;
+                String line;
+                BufferedReader bufferedReader;
                 data = "";
                 try
                 {
@@ -130,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 String jsonString = data;
 
                 // Cria um JSONObject a partir da string
-                JSONObject jsonObject = null;
+                JSONObject jsonObject;
                 try {
                     jsonObject = new JSONObject(jsonString);
                 } catch (JSONException e) {
@@ -143,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
 
-                int table = 0;
+                int table;
                 try {
                     table = jsonObject.getInt("table");
                 } catch (JSONException e) {
@@ -157,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    String  l_table = "";
+                    String  l_table;
                     l_table = String.valueOf(tv1.getText());
                     tv1.setText(l_table);
                     content(tv1);
@@ -170,14 +168,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendZeroTable( )
     {
-        final Handler handler = new Handler();
+        //final Handler handler = new Handler();
         final Runnable runnable = new Runnable() {
             @Override
 
             public void run()
             {
-                String line = "";
-                BufferedReader bufferedReader = null;
                 try
                 {
                     URL url = new URL("http://192.168.18.45:8080/json.xama1/servletInput?mesa=0");
@@ -188,16 +184,8 @@ public class MainActivity extends AppCompatActivity {
                     httpURLConnection.setDoInput(true);
                     httpURLConnection.connect();
 
-                    //String l_err = httpURLConnection.getErrorStream().toString();
-                    int response = httpURLConnection.getResponseCode();
+                    //int response = httpURLConnection.getResponseCode();
 
-/*                    InputStream inputStream = httpURLConnection.getInputStream();
-                    bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    while ((line = bufferedReader.readLine()) != null)
-                    {
-                        data = data + line;
-                    }*/
                 } catch (IOException e) {
                     //e.printStackTrace();
                     throw new RuntimeException(e);
